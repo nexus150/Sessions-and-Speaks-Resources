@@ -1,0 +1,11 @@
+
+
+Scripts de tabular editor
+https://docs.tabulareditor.com/Useful-script-snippets.html
+
+Scripts comunitarios para tabular editor
+https://github.com/TabularEditor/Scripts
+
+
+Scripts TE reunidos en mi repositorio
+https://github.com/nexus150/Tabular-Editor-Scripts

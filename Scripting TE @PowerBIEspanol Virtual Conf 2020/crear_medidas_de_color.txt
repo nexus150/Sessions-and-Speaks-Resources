@@ -1,0 +1,13 @@
+string query = "EVALUATE FILTER(VALUES('Product'[Color]) ,  not(ISBLANK('Product'[Color])) )" ;
+using (var reader = Model.Database.ExecuteReader(query))
+{
+    // Create a loop for every row in the resultset
+    while(reader.Read())
+    {
+        string myColour = reader.GetValue(0).ToString();
+        string measureName = myColour;
+        string myExpression = "CALCULATE( SUM('Sales'[Sales Amount]), 'Product'[Color] = \""  + myColour + "\")";
+      
+        Model.Tables["Sales"].AddMeasure(measureName, myExpression, "AutoMeasures");
+    }
+}

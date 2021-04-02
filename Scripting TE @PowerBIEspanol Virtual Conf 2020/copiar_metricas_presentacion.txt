@@ -1,0 +1,20 @@
+string query = "EVALUATE SUMMARIZE('Table', 'Table'[Name]  , 'Table'[expression] )";
+ 
+using (var reader = Model.Database.ExecuteReader(query))
+{​​​​​​​
+ // Create a loop for every row in the resultset
+ while(reader.Read())
+ {​​​​​​​
+ string NombreMetrica = reader.GetValue(0).ToString();
+ string FormulaTexto = reader.GetValue(1).ToString();
+ 
+ Model.Tables["Sales"].AddMeasure(NombreMetrica, FormulaTexto, "Default");
+ }​​​​​​​
+}​​​​​​​;
+
+// Crear versión de cada medida con coalesce para colocar en tarjetas
+foreach (var m in Selected.Measures)
+    {
+        string medida = m.Name;
+        Model.Tables["Tabla"].AddMeasure(medida + " for card", "Coalesce([" +medida+ "],0)", "Coalesce");
+    }

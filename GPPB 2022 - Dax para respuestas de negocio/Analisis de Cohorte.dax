@@ -1,0 +1,36 @@
+﻿//CLientes que me han comprado N cantidad de años
+Define
+VAR anios_cohorte = 3
+VAR NumberOfYears =
+     CALCULATE (
+         DISTINCTCOUNT ( 'Date'[Year] ),
+         CROSSFILTER ( Sales[OrderDateKey], 'Date'[DateKey], BOTH ),
+         ALLSELECTED ( )
+     )
+VAR CustomersAndYears =
+    CALCULATETABLE (
+        SUMMARIZE (                    -- Group the Receipts table
+            Sales,                  -- by store and year
+            Customer[CustomerKey],           -- in order to count how
+            'Date'[Year]      -- many years a store is present in
+        ),                             -- 
+        ALLSELECTED ( )                -- Over all selected years and stores
+    )
+VAR CustomersAndYearCount =
+     GROUPBY (
+         CustomersAndYears,
+         Customer[CustomerKey],
+         "@Years", SUMX ( CURRENTGROUP (), 1 )
+     )
+VAR ActiveCustomers =
+    FILTER (
+        CustomersAndYearCount,
+        [@Years] = anios_cohorte
+    )
+VAR Result =
+    CALCULATE (
+        [Sum of Sales Amount],
+        KEEPFILTERS ( ActiveCustomers )    
+    )
+Evaluate
+    {Result}

@@ -1,0 +1,34 @@
+﻿EVALUATE
+VAR TOPNX = 20
+VAR ClientesConVentas = 
+    ADDCOLUMNS(
+        VALUES(Customer[Customer ID]),
+        "Ventas", [Sum of Sales Amount]
+    )
+VAR TopNClientes = 
+    TOPN(
+        TOPNX,
+        ClientesConVentas,
+        [Ventas]
+    )
+VAR RestoDeClientes = 
+    EXCEPT(ClientesConVentas, TopNClientes)
+VAR TopNClientesRankeados =
+    ADDCOLUMNS(
+        TopNClientes,
+        "Orden", RANKX(TopNClientes, [Ventas])
+    )
+VAR FilaOtros =
+    ROW(
+        "Cliente", "Otros",
+        "Ventas", SUMX(
+            RestoDeClientes,
+            [Ventas]
+        ),
+        "Orden", TOPNX + 1
+    )
+VAR Resultado = 
+    UNION(TopNClientesRankeados, FilaOtros)
+Return Resultado
+ORDER BY [Orden]
+

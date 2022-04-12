@@ -1,0 +1,52 @@
+﻿/*Summarize*/
+EVALUATE
+SUMMARIZE (
+    Sales,
+    ROLLUP ( 'Date'[MonthKey], Customer[Customer] ),
+    "Total Sales", [Sum of Sales Amount],
+    "Total Quantity", [Sum of Order Quantity],
+    "Subtotal MOnth", ISSUBTOTAL ( 'Date'[MonthKey] )
+)
+/*Summarize + ADDCOLUMNS*/
+EVALUATE
+ADDCOLUMNS (
+    SUMMARIZE ( Sales, 'Date'[MonthKey], Customer[Customer] ),
+    "Total Sales", [Sum of Sales Amount],
+    "Total Quantity", [Sum of Order Quantity]
+)
+/*Summarizecolumns*/
+EVALUATE
+SUMMARIZECOLUMNS (
+    ROLLUPADDISSUBTOTAL (
+        ROLLUPGROUP ( 'Date'[MonthKey], Customer[Customer] ),
+        "Total MOnth/Customer"
+    ),
+    "Total Sales", [Sum of Sales Amount],
+    "Total Quantity", [Sum of Order Quantity]
+)
+/*Group BY*/
+EVALUATE
+GROUPBY (
+    Sales,
+    'Date'[Month],
+    Customer[Customer],
+    "Total Sales", SUMX ( CURRENTGROUP (), Sales[Sales Amount] ),
+    "Total Quantity", SUMX ( CURRENTGROUP (), Sales[Order Quantity] )
+)
+
+/*Group BY puede agrupar por columnas que no sean del modelo*/
+EVALUATE
+GROUPBY(
+	GROUPBY (
+	    ADDCOLUMNS ( Sales, "Rand", RANDBETWEEN ( 1, 10 ) ),
+	    'Date'[Month],
+	    Customer[Customer],
+	    [Rand],
+	    "Total Sales", SUMX ( CURRENTGROUP (), Sales[Sales Amount] ),
+	    "Total Quantity", SUMX ( CURRENTGROUP (), Sales[Order Quantity] )
+	)
+,
+[RAND],
+"Total Sales", SUMX(CURRENTGROUP(), [Total Sales])
+)
+Order by [RAND]

@@ -1,0 +1,49 @@
+Script 1
+string query = "EVALUATE RolesAuxiliar";
+
+using (var reader = Model.Database.ExecuteReader(query)){
+    
+    //Create a loop for every row in the resulset   
+    while(reader.Read()){
+        
+  
+     string MyRol = reader.GetValue(0).ToString();
+     string rls = reader.GetValue(2).ToString();
+     string Table = reader.GetValue(1).ToString();
+     if (!Model.Roles.ToList().Any(x => x.Name == MyRol))
+     {  
+        var obj = Model.AddRole(MyRol);
+             obj.ModelPermission = ModelPermission.Read;
+     }   
+
+     Model.Tables[Table].RowLevelSecurity[MyRol] = rls; 
+
+    }
+ }
+
+
+Script 2
+string query = "EVALUATE FILTER(CROSSJOIN(VALUES('Product'[Color]),VALUES('Sales Territory'[Country])),NOT(ISBLANK('Product'[Color]))) ORDER BY 'Product'[Color]";;
+
+
+using (var reader = Model.Database.ExecuteReader(query)){
+    //Create a loop for every row in the resulset   
+    while(reader.Read()){
+        
+     string Color = reader.GetValue(0).ToString();
+     string Pais =  reader.GetValue(1).ToString() ; 
+     string MyRol = "Rol con permisos en color " + Color + " y pais " + Pais ;
+     string rls_color = "Product[color]=\"" + Color + "\"" ;
+     string rls_pais = "'Sales Territory'[country]=\"" + Pais + "\"" ;
+     if (!Model.Roles.ToList().Any(x => x.Name == MyRol))
+     {  
+        var obj = Model.AddRole(MyRol);
+             obj.ModelPermission = ModelPermission.Read;
+     }   
+
+     Model.Tables["Product"].RowLevelSecurity[MyRol] = rls_color;
+     Model.Tables["Sales Territory"].RowLevelSecurity[MyRol] = rls_pais;  
+
+    }
+
+ }

@@ -1,0 +1,50 @@
+Rol Dinamico 1
+
+Productos
+
+countrows(
+Filter(Users, 
+containsstring(users[colors] , [Color] )
+ && Users[username] = userprincipalname() )
+
+) = 1
+
+
+----------------------------------
+Rol Dinamico 2
+
+Producto
+
+
+var grupos =
+filter('Roles / Usuarios', 'Roles / Usuarios'[user]=userprincipalname() )
+
+var permisos_grupos = 
+filter(groups, groups[Group] in summarize(grupos, 'Roles / Usuarios'[group])
+
+)
+
+var permisos =
+sumx(permisos_grupos , 
+if (containsstring(groups[colors] , [Color] ) ,1,0))
+
+return permisos >= 1
+
+
+
+Paises:
+
+
+var grupos =
+filter('Roles / Usuarios', 'Roles / Usuarios'[user]=userprincipalname() )
+
+var permisos_grupos = 
+filter(groups, groups[Group] in summarize(grupos, 'Roles / Usuarios'[group])
+
+)
+
+var permisos =
+sumx(permisos_grupos , 
+if (containsstring(groups[Countries] , [Country] ) ,1,0))
+
+return permisos >= 1
